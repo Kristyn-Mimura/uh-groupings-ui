@@ -107,9 +107,9 @@ public class GroupingsRestController {
     }
 
     @GetMapping(value = "/adminsGroupings")
-    public ResponseEntity<String> adminsGroupings(Principal principal) {
+    public ResponseEntity<String> adminsGroupings() {
         logger.info("Entered REST adminsGroupings...");
-        String principalName = policy.sanitize(principal.getName());
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
         String uri = API_2_1_BASE + "/admins-and-groupings";
         return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.GET);
     }
@@ -117,101 +117,114 @@ public class GroupingsRestController {
 
     @PostMapping(value = "/groupings/group")
     @ResponseBody
-    public ResponseEntity<String> getGrouping(Principal principal, @RequestBody(required = true) List<String> groupPaths,
+    public ResponseEntity<String> getGrouping(@RequestBody(required = true) List<String> groupPaths,
                                              @RequestParam(required = true) Integer page,
                                              @RequestParam(required = true) Integer size,
                                              @RequestParam(required = true) String sortString,
                                              @RequestParam(required = true) Boolean isAscending) {
         logger.info("Entered REST getGrouping...");
         Map<String, String> params = mapGroupingParameters(page, size, sortString, isAscending);
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
         String baseUri = API_2_1_BASE + "/groupings/group";
         String uri = buildUriWithParams(baseUri, params);
-        return httpRequestService.makeApiRequestWithBody(principal.getName(), uri, groupPaths, HttpMethod.POST);
+        return httpRequestService.makeApiRequestWithBody(principalName, uri, groupPaths, HttpMethod.POST);
     }
 
     @GetMapping(value = "/groupings/{groupPath}/description")
-    public  ResponseEntity<String> getGroupingDescription(Principal principal, @PathVariable String groupPath) {
+    public  ResponseEntity<String> getGroupingDescription(@PathVariable String groupPath) {
         logger.info("Entered REST getGroupingDescription...");
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
         String uri = String.format(API_2_1_BASE + "/groupings/%s/description", policy.sanitize(groupPath));
-        return httpRequestService.makeApiRequest(principal.getName(), uri, HttpMethod.GET);
+        return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.GET);
     }
 
-    @GetMapping(value = "/groupings/{groupPath}/groupings-sync-destinations")
-    public  ResponseEntity<String> getGroupingSyncDest(Principal principal, @PathVariable String groupPath) {
+    @GetMapping(value = "/groupings/{groupPath}/groupings-sync-dFestinations")
+    public  ResponseEntity<String> getGroupingSyncDest(@PathVariable String groupPath) {
         logger.info("Entered REST getGroupingSyncDest...");
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
         String uri = String.format(API_2_1_BASE + "/groupings/%s/groupings-sync-destinations", policy.sanitize(groupPath));
-        return httpRequestService.makeApiRequest(principal.getName(), uri, HttpMethod.GET);
+        return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.GET);
     }
 
     @GetMapping(value = "/groupings/{groupPath}/opt-attributes")
-    public  ResponseEntity<String> getGroupingOptAttributes(Principal principal, @PathVariable String groupPath) {
+    public  ResponseEntity<String> getGroupingOptAttributes(@PathVariable String groupPath) {
         logger.info("Entered REST getGroupingOptAttributes...");
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
         String uri = String.format(API_2_1_BASE + "/groupings/%s/opt-attributes", policy.sanitize(groupPath));
-        return httpRequestService.makeApiRequest(principal.getName(), uri, HttpMethod.GET);
+        return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.GET);
     }
 
     /**
      * Check if principle is an administrator.
      */
-    @GetMapping(value = "/admins")
-    public ResponseEntity<String> hasAdminPrivs(Principal principal) {
-        logger.info("Entered REST hasAdminPrivs...");
-        String uri = String.format(API_2_1_BASE + "/admins", principal.getName());
-        return httpRequestService.makeApiRequest(principal.getName(), uri, HttpMethod.GET);
-    }
+//    @GetMapping(value = "/admins")
+//    public ResponseEntity<String> hasAdminPrivs() {
+//        logger.info("Entered REST hasAdminPrivs...");
+//        String principalName = policy.sanitize(userContextService.getCurrentUserName());
+//        String uri = String.format(API_2_1_BASE + "/admins", principalName);
+//        return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.GET);
+//    }
 
+    @GetMapping(value = "/admins")
+    public ResponseEntity<String> hasAdminPrivs() {
+        logger.info("Entered REST hasAdminPrivs...");
+        String principalName = userContextService.getCurrentUserName();
+        String uri = String.format(API_2_1_BASE + "/admins", principalName);
+        return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.GET);
+    }
     /**
      * Add a member to the admin group.
      */
     @PostMapping(value = "/{adminToAdd}/addAdmin")
-    public ResponseEntity<String> addAdmin(Principal principal, @PathVariable String adminToAdd) {
+    public ResponseEntity<String> addAdmin(@PathVariable String adminToAdd) {
         logger.info("Entered REST addAdmin...");
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
         String safeInput = policy.sanitize(adminToAdd);
         String uri = String.format(API_2_1_BASE + "/admins/%s", safeInput);
-        return httpRequestService.makeApiRequest(principal.getName(), uri, HttpMethod.POST);
+        return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.POST);
     }
 
     /**
      * Delete a member from the admin group.
      */
     @PostMapping(value = "/{adminToRemove}/removeAdmin")
-    public ResponseEntity<String> removeAdmin(Principal principal,
-            @PathVariable String adminToRemove) {
+    public ResponseEntity<String> removeAdmin(@PathVariable String adminToRemove) {
         logger.info("Entered REST removeAdmin...");
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
         String safeInput = policy.sanitize(adminToRemove);
         String uri = String.format(API_2_1_BASE + "/admins/%s", safeInput);
-        return httpRequestService.makeApiRequest(principal.getName(), uri, HttpMethod.DELETE);
+        return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.DELETE);
     }
 
     /**
      * Remove a member from multiple groups.
      */
     @PostMapping(value = "/{groupings}/{userToDelete}/removeFromGroups")
-    public ResponseEntity<String> removeFromGroups(Principal principal,
-            @PathVariable String groupings,
-            @PathVariable String userToDelete) {
+    public ResponseEntity<String> removeFromGroups(@PathVariable String groupings,
+                                                   @PathVariable String userToDelete) {
         logger.info("Entered REST removeFromGroups...");
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
         String safeGroupings = policy.sanitize(groupings);
         String safeUserToDelete = policy.sanitize(userToDelete);
         String uri = String.format(API_2_1_BASE + "/admins/%s/%s", safeGroupings, safeUserToDelete);
-        return httpRequestService.makeApiRequest(principal.getName(), uri, HttpMethod.DELETE);
+        return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.DELETE);
     }
 
     /**
      * Wipe the grouping clean of all members and reset the groupings preferences.
      */
     @PostMapping(value = "/{path}/{include}/{exclude}/resetGroup")
-    public ResponseEntity<String> resetGroup(Principal principal,
-            @PathVariable String path,
-            @PathVariable String include,
-            @PathVariable String exclude) {
+    public ResponseEntity<String> resetGroup(@PathVariable String path,
+                                             @PathVariable String include,
+                                             @PathVariable String exclude) {
         logger.info("Entered REST resetGroup...");
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
         String safePath = policy.sanitize(path);
         String safeInclude = policy.sanitize(include);
         String safeExclude = policy.sanitize(exclude);
         String uri =
                 String.format(API_2_1_BASE + "/groupings/%s/%s/%s/reset-group", safePath, safeInclude, safeExclude);
-        return httpRequestService.makeApiRequest(principal.getName(), uri, HttpMethod.DELETE);
+        return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.DELETE);
     }
 
     /**
@@ -219,11 +232,12 @@ public class GroupingsRestController {
      */
     @PostMapping(value = "/members/invalid")
     @ResponseBody
-    public ResponseEntity<String> invalidUhIdentifiers(Principal principal, @RequestBody List<String> uhIdentifiers) {
+    public ResponseEntity<String> invalidUhIdentifiers(@RequestBody List<String> uhIdentifiers) {
         logger.info("Entered REST invalidUhIdentifiers...");
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
         List<String> safeInput = sanitizeList(uhIdentifiers);
         String uri = String.format(API_2_1_BASE + "/members/invalid");
-        return httpRequestService.makeApiRequestWithBody(principal.getName(), uri, safeInput, HttpMethod.POST);
+        return httpRequestService.makeApiRequestWithBody(principalName, uri, safeInput, HttpMethod.POST);
     }
 
     /**
@@ -231,44 +245,48 @@ public class GroupingsRestController {
      */
     @PostMapping(value = "/members/invalidAsync")
     @ResponseBody
-    public ResponseEntity<String> invalidUhIdentifiersAsync(Principal principal, @RequestBody List<String> uhIdentifiers) {
+    public ResponseEntity<String> invalidUhIdentifiersAsync(@RequestBody List<String> uhIdentifiers) {
         logger.info("Entered REST invalidUhIdentifiersAsync...");
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
         List<String> safeInput = sanitizeList(uhIdentifiers);
         String uri = String.format(API_2_1_BASE + "/members/invalid/async");
-        return httpRequestService.makeApiRequestWithBody(principal.getName(), uri, safeInput, HttpMethod.POST);
+        return httpRequestService.makeApiRequestWithBody(principalName, uri, safeInput, HttpMethod.POST);
     }
 
     /**
      * Remove all members from the include group.
      */
     @PostMapping(value = "{groupingPath}/resetIncludeGroup")
-    public ResponseEntity<String> resetIncludeGroup(Principal principal, @PathVariable String groupingPath) {
+    public ResponseEntity<String> resetIncludeGroup(@PathVariable String groupingPath) {
         logger.info("Entered REST resetIncludeGroup...");
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
         String safeGroupingPath = policy.sanitize(groupingPath);
         String uri = String.format(API_2_1_BASE + "/groupings/%s/include", safeGroupingPath);
-        return httpRequestService.makeApiRequest(principal.getName(), uri, HttpMethod.DELETE);
+        return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.DELETE);
     }
 
     /**
      * Remove all members from the include group asynchronously.
      */
     @PostMapping(value = "{groupingPath}/resetIncludeGroupAsync")
-    public ResponseEntity<String> resetIncludeGroupAsync(Principal principal, @PathVariable String groupingPath) {
+    public ResponseEntity<String> resetIncludeGroupAsync(@PathVariable String groupingPath) {
         logger.info("Entered REST resetIncludeGroupAsync...");
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
         String safeGroupingPath = policy.sanitize(groupingPath);
         String uri = String.format(API_2_1_BASE + "/groupings/%s/include/async", safeGroupingPath);
-        return httpRequestService.makeApiRequest(principal.getName(), uri, HttpMethod.DELETE);
+        return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.DELETE);
     }
 
     /**
      * Remove all members from the exclude group.
      */
     @PostMapping(value = "{groupingPath}/resetExcludeGroup")
-    public ResponseEntity<String> resetExcludeGroup(Principal principal, @PathVariable String groupingPath) {
+    public ResponseEntity<String> resetExcludeGroup(@PathVariable String groupingPath) {
         logger.info("Entered REST resetExcludeGroup...");
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
         String safeGroupingPath = policy.sanitize(groupingPath);
         String uri = String.format(API_2_1_BASE + "/groupings/%s/exclude", safeGroupingPath);
-        return httpRequestService.makeApiRequest(principal.getName(), uri, HttpMethod.DELETE);
+        return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.DELETE);
     }
 
     /**
@@ -277,9 +295,10 @@ public class GroupingsRestController {
     @PostMapping(value = "{groupingPath}/resetExcludeGroupAsync")
     public ResponseEntity<String> resetExcludeGroupAsync(Principal principal, @PathVariable String groupingPath) {
         logger.info("Entered REST resetExcludeGroupAsync...");
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
         String safeGroupingPath = policy.sanitize(groupingPath);
         String uri = String.format(API_2_1_BASE + "/groupings/%s/exclude/async", safeGroupingPath);
-        return httpRequestService.makeApiRequest(principal.getName(), uri, HttpMethod.DELETE);
+        return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.DELETE);
     }
 
     /**
@@ -287,11 +306,12 @@ public class GroupingsRestController {
      */
     @GetMapping(value = "/members/{uhIdentifier}")
     @ResponseBody
-    public ResponseEntity<String> memberAttributes(Principal principal, @PathVariable String uhIdentifier) {
+    public ResponseEntity<String> memberAttributes(@PathVariable String uhIdentifier) {
         logger.info("Entered REST memberAttributes...");
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
         String safeInput = policy.sanitize(uhIdentifier);
         String uri = String.format(API_2_1_BASE + "/members/%s", safeInput);
-        return httpRequestService.makeApiRequest(principal.getName(), uri, HttpMethod.GET);
+        return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.GET);
     }
 
     /**
@@ -299,20 +319,21 @@ public class GroupingsRestController {
      */
     @PostMapping(value = "/members")
     @ResponseBody
-    public ResponseEntity<String> membersAttributes(Principal principal, @RequestBody List<String> uhIdentifiers) {
+    public ResponseEntity<String> membersAttributes(@RequestBody List<String> uhIdentifiers) {
         logger.info("Entered REST membersAttributes...");
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
         List<String> safeInput = sanitizeList(uhIdentifiers);
         String uri = String.format(API_2_1_BASE + "/members");
-        return httpRequestService.makeApiRequestWithBody(principal.getName(), uri, safeInput, HttpMethod.POST);
+        return httpRequestService.makeApiRequestWithBody(principalName, uri, safeInput, HttpMethod.POST);
     }
 
     /**
      * Get a list of memberships that the current user is associated with.
      */
     @GetMapping(value = "/members/memberships")
-    public ResponseEntity<String> membershipResults(Principal principal) {
+    public ResponseEntity<String> membershipResults() {
         logger.info("Entered REST membershipResults...");
-        String principalName = policy.sanitize(principal.getName());
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
         String uri = String.format(API_2_1_BASE + "/members/%s/memberships", principalName);
         return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.GET);
     }
@@ -321,126 +342,133 @@ public class GroupingsRestController {
      * Get the number of memberships that the current user is associated with.
      */
     @GetMapping(value = "/members/memberships/count")
-    public ResponseEntity<String> getNumberOfMemberships(Principal principal) {
+    public ResponseEntity<String> getNumberOfMemberships() {
         logger.info("Entered REST getNumberOfMemberships...");
-        String uri = String.format(API_2_1_BASE + "/members/%s/memberships/count", principal.getName());
-        return httpRequestService.makeApiRequest(principal.getName(), uri, HttpMethod.GET);
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
+        String uri = String.format(API_2_1_BASE + "/members/%s/memberships/count", principalName);
+        return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.GET);
     }
 
     @GetMapping(value = "/members/{uhIdentifier}/groupings",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> managePersonResults(Principal principal,
-            @PathVariable String uhIdentifier) {
+    public ResponseEntity<String> managePersonResults(@PathVariable String uhIdentifier) {
         logger.info("Entered REST managePersonResults...");
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
         String uri = String.format(API_2_1_BASE + "/members/%s/groupings", uhIdentifier);
-        return httpRequestService.makeApiRequest(principal.getName(), uri, HttpMethod.GET);
+        return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.GET);
     }
 
     /**
      * Get a list of grouping paths that the current user can opt into.
      */
     @GetMapping(value = "/groupings/optInGroups")
-    public ResponseEntity<String> optInGroups(Principal principal) {
+    public ResponseEntity<String> optInGroups() {
         logger.info("Entered REST optInGroups...");
-        String uri = String.format(API_2_1_BASE + "/groupings/members/%s/opt-in-groups", principal.getName());
-        return httpRequestService.makeApiRequest(principal.getName(), uri, HttpMethod.GET);
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
+        String uri = String.format(API_2_1_BASE + "/groupings/members/%s/opt-in-groups", principalName);
+        return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.GET);
     }
 
     /**
      * Add yourself to the include group of grouping at path.
      */
     @PostMapping(value = "/{grouping}/optIn")
-    public ResponseEntity<String> optIn(Principal principal, @PathVariable String grouping) {
+    public ResponseEntity<String> optIn(@PathVariable String grouping) {
         logger.info("Entered REST optIn...");
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
         String safeGrouping = policy.sanitize(grouping);
         String uri =
                 String.format(API_2_1_BASE + "/groupings/%s/include-members/%s/self", safeGrouping,
-                        principal.getName());
-        return httpRequestService.makeApiRequest(principal.getName(), uri, HttpMethod.PUT);
+                        principalName);
+        return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.PUT);
     }
 
     /**
      * Add yourself to the exclude group of grouping at path.
      */
     @PostMapping(value = "/{grouping}/optOut")
-    public ResponseEntity<String> optOut(Principal principal, @PathVariable String grouping) {
+    public ResponseEntity<String> optOut(@PathVariable String grouping) {
         logger.info("Entered REST optOut...");
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
         String safeGrouping = policy.sanitize(grouping);
         String uri =
                 String.format(API_2_1_BASE + "/groupings/%s/exclude-members/%s/self", safeGrouping,
-                        principal.getName());
-        return httpRequestService.makeApiRequest(principal.getName(), uri, HttpMethod.PUT);
+                        principalName);
+        return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.PUT);
     }
 
     /**
      * Add a list of uhIdentifiers to include group of grouping at path.
      */
     @PutMapping(value = "/{groupingPath}/addIncludeMembers")
-    public ResponseEntity<String> addIncludeMembers(Principal principal,
-            @PathVariable String groupingPath,
-            @RequestBody List<String> uhIdentifiers) {
+    public ResponseEntity<String> addIncludeMembers(@PathVariable String groupingPath,
+                                                    @RequestBody List<String> uhIdentifiers) {
         logger.info("Entered REST addIncludeMembers...");
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
         String safeGroupingPath = policy.sanitize(groupingPath);
         List<String> safeUhIdentifiers = sanitizeList(uhIdentifiers);
         String uri = String.format(API_2_1_BASE + "/groupings/%s/include-members", safeGroupingPath);
-        return httpRequestService.makeApiRequestWithBody(principal.getName(), uri, safeUhIdentifiers, HttpMethod.PUT);
+        return httpRequestService.makeApiRequestWithBody(principalName, uri, safeUhIdentifiers, HttpMethod.PUT);
     }
 
     /**
      * Add a list of uhIdentifiers to include group of grouping at path asynchronously.
      */
     @PutMapping(value = "/{groupingPath}/addIncludeMembersAsync")
-    public ResponseEntity<String> addIncludeMembersAsync(Principal principal,
-            @PathVariable String groupingPath,
-            @RequestBody List<String> uhIdentifiers) {
+    public ResponseEntity<String> addIncludeMembersAsync(@PathVariable String groupingPath,
+                                                         @RequestBody List<String> uhIdentifiers) {
         logger.info("Entered REST addIncludeMembersAsync...");
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
         String safeGroupingPath = policy.sanitize(groupingPath);
         List<String> safeUhIdentifiers = sanitizeList(uhIdentifiers);
         String uri = String.format(API_2_1_BASE + "/groupings/%s/include-members/async", safeGroupingPath);
-        return httpRequestService.makeApiRequestWithBody(principal.getName(), uri, safeUhIdentifiers, HttpMethod.PUT);
+        return httpRequestService.makeApiRequestWithBody(principalName, uri, safeUhIdentifiers, HttpMethod.PUT);
     }
 
     /**
      * Add a list of uhIdentifiers to exclude group of grouping at path.
      */
     @PutMapping(value = "/{groupingPath}/addExcludeMembers")
-    public ResponseEntity<String> addExcludeMembers(Principal principal,
+    public ResponseEntity<String> addExcludeMembers(
             @PathVariable String groupingPath,
             @RequestBody List<String> uhIdentifiers) {
         logger.info("Entered REST addExcludeMembers...");
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
         String safeGroupingPath = policy.sanitize(groupingPath);
         List<String> safeUhIdentifiers = sanitizeList(uhIdentifiers);
         String uri = String.format(API_2_1_BASE + "/groupings/%s/exclude-members", safeGroupingPath);
-        return httpRequestService.makeApiRequestWithBody(principal.getName(), uri, safeUhIdentifiers, HttpMethod.PUT);
+        return httpRequestService.makeApiRequestWithBody(principalName, uri, safeUhIdentifiers, HttpMethod.PUT);
     }
 
     /**
      * Add a list of uhIdentifiers to exclude group of grouping at path asynchronously.
      */
     @PutMapping(value = "/{groupingPath}/addExcludeMembersAsync")
-    public ResponseEntity<String> addExcludeMembersAsync(Principal principal,
+    public ResponseEntity<String> addExcludeMembersAsync(
             @PathVariable String groupingPath,
             @RequestBody List<String> uhIdentifiers) {
         logger.info("Entered REST addExcludeMembersAsync...");
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
         String safeGroupingPath = policy.sanitize(groupingPath);
         List<String> safeUhIdentifiers = sanitizeList(uhIdentifiers);
         String uri = String.format(API_2_1_BASE + "/groupings/%s/exclude-members/async", safeGroupingPath);
-        return httpRequestService.makeApiRequestWithBody(principal.getName(), uri, safeUhIdentifiers, HttpMethod.PUT);
+        return httpRequestService.makeApiRequestWithBody(principalName, uri, safeUhIdentifiers, HttpMethod.PUT);
     }
 
     /**
      * Remove a list of uhIdentifiers from include group of grouping at path.
      */
     @PutMapping(value = "/{groupingPath}/removeIncludeMembers")
-    public ResponseEntity<String> removeIncludeMembers(Principal principal,
+    public ResponseEntity<String> removeIncludeMembers(
             @PathVariable String groupingPath,
             @RequestBody List<String> uhIdentifiers) {
         logger.info("Entered REST removeIncludeMembers...");
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
         String safeGroupingPath = policy.sanitize(groupingPath);
         List<String> safeUhIdentifiers = sanitizeList(uhIdentifiers);
         String uri =
                 String.format(API_2_1_BASE + "/groupings/%s/include-members", safeGroupingPath);
-        return httpRequestService.makeApiRequestWithBody(principal.getName(), uri, safeUhIdentifiers,
+        return httpRequestService.makeApiRequestWithBody(principalName, uri, safeUhIdentifiers,
                 HttpMethod.DELETE);
     }
 
@@ -448,15 +476,16 @@ public class GroupingsRestController {
      * Remove a list of uhIdentifiers from exclude group of grouping at path.
      */
     @PutMapping(value = "/{groupingPath}/removeExcludeMembers")
-    public ResponseEntity<String> removeExcludeMembers(Principal principal,
+    public ResponseEntity<String> removeExcludeMembers(
             @PathVariable String groupingPath,
             @RequestBody List<String> uhIdentifiers) {
         logger.info("Entered REST removeExcludeMembers...");
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
         String safeGroupingPath = policy.sanitize(groupingPath);
         List<String> safeUhIdentifiers = sanitizeList(uhIdentifiers);
         String uri =
                 String.format(API_2_1_BASE + "/groupings/%s/exclude-members", safeGroupingPath);
-        return httpRequestService.makeApiRequestWithBody(principal.getName(), uri, safeUhIdentifiers,
+        return httpRequestService.makeApiRequestWithBody(principalName, uri, safeUhIdentifiers,
                 HttpMethod.DELETE);
     }
 
@@ -464,40 +493,44 @@ public class GroupingsRestController {
      * Request a list of grouping paths owned by principal.
      */
     @GetMapping(value = "/owners/groupings")
-    public ResponseEntity<String> ownerGroupings(Principal principal) {
+    public ResponseEntity<String> ownerGroupings() {
         logger.info("Entered REST ownerGroupings...");
-        String uri = String.format(API_2_1_BASE + "/owners/%s/groupings", principal.getName());
-        return httpRequestService.makeApiRequest(principal.getName(), uri, HttpMethod.GET);
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
+        String uri = String.format(API_2_1_BASE + "/owners/%s/groupings", principalName);
+        return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.GET);
     }
 
     /**
      * Request the number of grouping paths owned by principal.
      */
     @GetMapping(value = "/owners/groupings/count")
-    public ResponseEntity<String> getNumberOfGroupings(Principal principal) {
+    public ResponseEntity<String> getNumberOfGroupings() {
         logger.info("Entered REST getNumberOfGroupings...");
-        String uri = String.format(API_2_1_BASE + "/owners/%s/groupings/count", principal.getName());
-        return httpRequestService.makeApiRequest(principal.getName(), uri, HttpMethod.GET);
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
+        String uri = String.format(API_2_1_BASE + "/owners/%s/groupings/count", principalName);
+        return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.GET);
     }
 
     /**
      * Check if principle is an owner, of any grouping.
      */
     @GetMapping(value = "/owners")
-    public ResponseEntity<String> hasOwnerPrivs(Principal principal) {
+    public ResponseEntity<String> hasOwnerPrivs() {
         logger.info("Entered REST hasOwnerPrivs...");
-        String uri = String.format(API_2_1_BASE + "/owners", principal.getName());
-        return httpRequestService.makeApiRequest(principal.getName(), uri, HttpMethod.GET);
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
+        String uri = String.format(API_2_1_BASE + "/owners", principalName);
+        return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.GET);
     }
 
     /**
      * Get grouping owners in groupingPath.
      */
     @GetMapping(value = "/grouping/{groupingPath}/owners")
-    public ResponseEntity<String> groupingOwners(Principal principal, @PathVariable String groupingPath) {
+    public ResponseEntity<String> groupingOwners(@PathVariable String groupingPath) {
         logger.info("Entered REST groupingOwners...");
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
         String uri = String.format(API_2_1_BASE + "/grouping/%s/owners", groupingPath);
-        return httpRequestService.makeApiRequest(principal.getName(), uri, HttpMethod.GET);
+        return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.GET);
     }
     /**
      * Give ownership of grouping at grouping path to newOwner. A user with owner privileges has
@@ -505,71 +538,75 @@ public class GroupingsRestController {
      * of a grouping.
      */
     @PostMapping(value = "/{groupingPath}/{newOwner}/addOwnerships")
-    public ResponseEntity<String> addOwnerships(Principal principal,
+    public ResponseEntity<String> addOwnerships(
             @PathVariable String groupingPath,
             @PathVariable String newOwner) {
         logger.info("Entered REST addOwnerships...");
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
         String safeGrouping = policy.sanitize(groupingPath);
         String safeNewOwner = policy.sanitize(newOwner);
         String uri = String.format(API_2_1_BASE + "/groupings/%s/owners/%s", safeGrouping, safeNewOwner);
-        return httpRequestService.makeApiRequest(principal.getName(), uri, HttpMethod.PUT);
+        return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.PUT);
     }
 
     /**
      * Cancel owner privileges of ownerToRemove for the grouping at groupingPath.
      */
     @PostMapping(value = "/{groupingPath}/{ownerToRemove}/removeOwnerships")
-    public ResponseEntity<String> removeOwnerships(Principal principal,
+    public ResponseEntity<String> removeOwnerships(
             @PathVariable String groupingPath,
             @PathVariable String ownerToRemove) {
         logger.info("Entered REST removeOwnerships...");
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
         String safeGroupingPath = policy.sanitize(groupingPath);
         String safeOwnerToRemove = policy.sanitize(ownerToRemove);
         String uri = String.format(API_2_1_BASE + "/groupings/%s/owners/%s", safeGroupingPath, safeOwnerToRemove);
-        return httpRequestService.makeApiRequest(principal.getName(), uri, HttpMethod.DELETE);
+        return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.DELETE);
     }
 
     /**
      * Fetch a page of the specified Grouping.
      */
     @GetMapping(value = "/groupings/{path:.+}")
-    public ResponseEntity<String> getGrouping(Principal principal, @PathVariable String path,
+    public ResponseEntity<String> getGrouping(@PathVariable String path,
             @RequestParam(required = true) Integer page,
             @RequestParam(required = true) Integer size,
             @RequestParam(required = true) String sortString,
             @RequestParam(required = true) Boolean isAscending) {
         logger.info("Entered REST getGrouping...");
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
         Map<String, String> params = mapGroupingParameters(page, size, sortString, isAscending);
         String baseUri = String.format(API_2_1_BASE + "/groupings/%s", path);
         String uri = buildUriWithParams(baseUri, params);
 
-        return httpRequestService.makeApiRequest(principal.getName(), uri, HttpMethod.GET);
+        return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.GET);
     }
 
     /**
      * Update the description of a grouping at path.
      */
     @PutMapping(value = "/groupings/{path}/description")
-    public ResponseEntity<String> updateDescription(Principal principal,
-            @PathVariable String path,
+    public ResponseEntity<String> updateDescription(@PathVariable String path,
             @RequestBody(required = false) String description) {
         logger.info("Entered REST updateDescription...");
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
         String safePath = policy.sanitize(path);
         String uri = String.format(API_2_1_BASE + "/groupings/%s/description", safePath);
-        return httpRequestService.makeApiRequestWithBody(principal.getName(), uri, description, HttpMethod.PUT);
+        return httpRequestService.makeApiRequestWithBody(principalName, uri, description, HttpMethod.PUT);
     }
 
     /**
      * Allow an owner of a Grouping to enable that a Grouping connected to a given sync destination.
      */
     @PostMapping(value = "/groupings/{path}/syncDests/{syncDestId}/enable")
-    public ResponseEntity<String> enableSyncDest(Principal principal,
+    public ResponseEntity<String> enableSyncDest(
             @PathVariable String path,
             @PathVariable String syncDestId) {
         logger.info("Entered REST enableSyncDest...");
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
         String safeGrouping = policy.sanitize(path);
         String safeSyncDestId = policy.sanitize(syncDestId);
-        return changeSyncDest(safeGrouping, principal.getName(), safeSyncDestId, true);
+        return changeSyncDest(safeGrouping, principalName, safeSyncDestId, true);
     }
 
     /**
@@ -577,71 +614,77 @@ public class GroupingsRestController {
      * destination.
      */
     @PostMapping(value = "/groupings/{path}/syncDests/{syncDestId}/disable")
-    public ResponseEntity<String> disableSyncDest(Principal principal,
+    public ResponseEntity<String> disableSyncDest(
             @PathVariable String path,
             @PathVariable String syncDestId) {
         logger.info("Entered REST disableSyncDest...");
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
         String safeGrouping = policy.sanitize(path);
         String safeSyncDestId = policy.sanitize(syncDestId);
-        return changeSyncDest(safeGrouping, principal.getName(), safeSyncDestId, false);
+        return changeSyncDest(safeGrouping, principalName, safeSyncDestId, false);
     }
 
     /**
      * Enable or disable a users ability to optIn to a grouping at groupingPath.
      */
     @PostMapping(value = "/{groupingPath}/{optInOn}/setOptIn")
-    public ResponseEntity<String> setOptIn(Principal principal,
+    public ResponseEntity<String> setOptIn(
             @PathVariable String groupingPath,
             @PathVariable boolean optInOn) {
         logger.info("Entered REST setOptIn...");
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
         String safeGroupingPath = policy.sanitize(groupingPath);
-        return changePreference(safeGroupingPath, principal.getName(), OPT_IN, optInOn);
+        return changePreference(safeGroupingPath, principalName, OPT_IN, optInOn);
     }
 
     /**
      * Enable or disable a users ability to opt out of grouping at groupingPath.
      */
     @PostMapping(value = "/{grouping}/{optOutOn}/setOptOut")
-    public ResponseEntity<String> setOptOut(Principal principal,
+    public ResponseEntity<String> setOptOut(
             @PathVariable String grouping,
             @PathVariable boolean optOutOn) {
         logger.info("Entered REST setOptOut...");
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
         String safeGrouping = policy.sanitize(grouping);
-        return changePreference(safeGrouping, principal.getName(), OPT_OUT, optOutOn);
+        return changePreference(safeGrouping, principalName, OPT_OUT, optOutOn);
     }
 
     /**
      * Checks if the owner of a grouping is the sole owner
      */
     @GetMapping(value = "/{path:.+}/owners/{uidToCheck}")
-    public ResponseEntity<String> isSoleOwner(Principal principal, @PathVariable String path,
+    public ResponseEntity<String> isSoleOwner(@PathVariable String path,
             @PathVariable String uidToCheck) {
         logger.info("Entered REST isSoleOwner...");
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
         String baseUri = String.format(API_2_1_BASE + "/groupings/%s/owners/%s", path, uidToCheck);
 
-        return httpRequestService.makeApiRequest(principal.getName(), baseUri, HttpMethod.GET);
+        return httpRequestService.makeApiRequest(principalName, baseUri, HttpMethod.GET);
     }
 
     /**
      * Fetch a list of supported sync destinations for grouping at path.
      */
     @GetMapping(value = "/groupings/{path}/sync-destinations")
-    public ResponseEntity<String> allSyncDestinations(Principal principal, @PathVariable String path) {
+    public ResponseEntity<String> allSyncDestinations(@PathVariable String path) {
         logger.info("Entered REST getAllSyncDestinations...");
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
         String safePath = policy.sanitize(path);
         String uri = String.format(API_2_1_BASE + "/groupings/%s/sync-destinations", safePath);
-        return httpRequestService.makeApiRequest(principal.getName(), uri, HttpMethod.GET);
+        return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.GET);
     }
 
     /**
      * Get async job result.
      */
     @GetMapping(value = "/jobs/{jobId}")
-    public ResponseEntity<String> getAsyncJobResult(Principal principal, @PathVariable String jobId) {
+    public ResponseEntity<String> getAsyncJobResult(@PathVariable String jobId) {
         logger.debug("Entered REST getAsyncJobResult...");
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
         String safeJobId = policy.sanitize(jobId);
         String uri = String.format(API_2_1_BASE + "/jobs/%s", safeJobId);
-        return httpRequestService.makeApiRequest(principal.getName(), uri, HttpMethod.GET);
+        return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.GET);
     }
 
     ///////////////////////////////////////////////////////////////////////

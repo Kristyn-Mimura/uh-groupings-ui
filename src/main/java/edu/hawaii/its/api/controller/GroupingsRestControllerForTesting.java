@@ -1,5 +1,7 @@
 package edu.hawaii.its.api.controller;
 
+import edu.hawaii.its.groupings.access.User;
+import edu.hawaii.its.groupings.access.UserContextService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import edu.hawaii.its.api.service.HttpRequestService;
@@ -26,10 +28,14 @@ public class GroupingsRestControllerForTesting {
     @Autowired
     private HttpRequestService httpRequestService;
 
+    @Autowired
+    private UserContextService userContextService;
+
     @GetMapping(value = "/exception")
-    public ResponseEntity<String> throwException(Principal principal) {
+    public ResponseEntity<String> throwException() {
         logger.info("Entered REST throwException...");
+        String principalName = userContextService.getCurrentUserName();
         String uri = String.format(API_2_1_BASE + "/exception");
-        return httpRequestService.makeApiRequest(principal.getName(), uri, HttpMethod.GET);
+        return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.GET);
     }
 }

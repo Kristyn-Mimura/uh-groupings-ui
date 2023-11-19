@@ -1,6 +1,5 @@
 package edu.hawaii.its.groupings.access;
 
-import org.jasig.cas.client.authentication.SimplePrincipal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import edu.hawaii.its.api.controller.GroupingsRestController;
@@ -15,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -68,15 +66,13 @@ public class UserBuilderTest {
     public void testAdminUser() {
         Map<String, String> map = new HashMap<>();
 
-        Principal principal = new SimplePrincipal(userContextService.getCurrentUhUuid());
-
         map.put("uid", userContextService.getCurrentUser().getUid());
         map.put("uhUuid", userContextService.getCurrentUhUuid());
 
 
-        given(groupingsRestController.hasOwnerPrivs(principal))
+        given(groupingsRestController.hasOwnerPrivs())
                 .willReturn(new ResponseEntity<>("true", HttpStatus.OK));
-        given(groupingsRestController.hasAdminPrivs(principal))
+        given(groupingsRestController.hasAdminPrivs())
                 .willReturn(new ResponseEntity<>("true", HttpStatus.OK));
 
         User user = userBuilder.make(map);

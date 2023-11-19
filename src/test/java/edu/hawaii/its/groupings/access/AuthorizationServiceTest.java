@@ -1,6 +1,5 @@
 package edu.hawaii.its.groupings.access;
 
-import org.jasig.cas.client.authentication.SimplePrincipal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -14,8 +13,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.WebApplicationContext;
-
-import java.security.Principal;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -60,11 +57,9 @@ public class AuthorizationServiceTest {
         User user = userContextService.getCurrentUser();
         String uhUuid = user.getUhUuid();
 
-        Principal principal = new SimplePrincipal(uhUuid);
-
-        given(groupingsRestController.hasOwnerPrivs(principal))
+        given(groupingsRestController.hasOwnerPrivs())
                 .willReturn(new ResponseEntity<>(null, HttpStatus.OK));
-        given(groupingsRestController.hasAdminPrivs(principal))
+        given(groupingsRestController.hasAdminPrivs())
                 .willReturn(new ResponseEntity<>(null, HttpStatus.OK));
 
         // What we are testing.
@@ -85,11 +80,9 @@ public class AuthorizationServiceTest {
         User user = userContextService.getCurrentUser();
         String uhUuid = user.getUhUuid();
 
-        Principal principal = new SimplePrincipal(uhUuid);
-
-        given(groupingsRestController.hasOwnerPrivs(principal))
+        given(groupingsRestController.hasOwnerPrivs())
                 .willReturn(new ResponseEntity<>("true", HttpStatus.OK));
-        given(groupingsRestController.hasAdminPrivs(principal))
+        given(groupingsRestController.hasAdminPrivs())
                 .willReturn(new ResponseEntity<>("true", HttpStatus.OK));
 
         // What we are testing.

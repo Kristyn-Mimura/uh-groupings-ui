@@ -2,7 +2,6 @@ package edu.hawaii.its.groupings.access;
 
 import org.jasig.cas.client.authentication.AttributePrincipal;
 import org.jasig.cas.client.authentication.AttributePrincipalImpl;
-import org.jasig.cas.client.authentication.SimplePrincipal;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.AssertionImpl;
 import org.junit.jupiter.api.Test;
@@ -16,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -77,10 +75,9 @@ public class UserDetailsServiceTest {
         CasUserDetailsServiceImpl userDetailsService = new CasUserDetailsServiceImpl(userBuilder);
 
         // Mock the role fetching from the Grouper server.
-        final Principal p = new SimplePrincipal(uhUuid);
-        given(groupingsRestController.hasOwnerPrivs(p))
+        given(groupingsRestController.hasOwnerPrivs())
                 .willReturn(new ResponseEntity<>("true", HttpStatus.OK));
-        given(groupingsRestController.hasAdminPrivs(p))
+        given(groupingsRestController.hasAdminPrivs())
                 .willReturn(new ResponseEntity<>("true", HttpStatus.OK));
 
         // What we are testing.
@@ -99,8 +96,8 @@ public class UserDetailsServiceTest {
         assertTrue(user.hasRole(Role.ADMIN));
 
         // Make sure the mocks were called.
-        verify(groupingsRestController, times(1)).hasOwnerPrivs(p);
-        verify(groupingsRestController, times(1)).hasAdminPrivs(p);
+        verify(groupingsRestController, times(1)).hasOwnerPrivs();
+        verify(groupingsRestController, times(1)).hasAdminPrivs();
     }
 
     @Test
@@ -116,10 +113,9 @@ public class UserDetailsServiceTest {
         CasUserDetailsServiceImpl userDetailsService = new CasUserDetailsServiceImpl(userBuilder);
 
         // Mock the role fetching from the Grouper server.
-        final Principal p = new SimplePrincipal(uhUuid);
-        given(groupingsRestController.hasOwnerPrivs(p))
+        given(groupingsRestController.hasOwnerPrivs())
                 .willReturn(new ResponseEntity<>("true", HttpStatus.OK));
-        given(groupingsRestController.hasAdminPrivs(p))
+        given(groupingsRestController.hasAdminPrivs())
                 .willReturn(new ResponseEntity<>("false", HttpStatus.OK)); // Note.
 
         // What we are testing.
@@ -139,8 +135,8 @@ public class UserDetailsServiceTest {
         assertFalse(user.hasRole(Role.ADMIN));
 
         // Make sure the mocks were called.
-        verify(groupingsRestController, times(1)).hasOwnerPrivs(p);
-        verify(groupingsRestController, times(1)).hasAdminPrivs(p);
+        verify(groupingsRestController, times(1)).hasOwnerPrivs();
+        verify(groupingsRestController, times(1)).hasAdminPrivs();
     }
 
     @Test

@@ -1,10 +1,13 @@
 package edu.hawaii.its.groupings.access;
 
+import org.springframework.cglib.SpringCglibInfo;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+
 
 @Service
 public class UserContextService {
@@ -19,6 +22,15 @@ public class UserContextService {
             }
         }
         return new AnonymousUser();
+    }
+
+    public String getCurrentUserName() {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        if (!(authentication instanceof AnonymousAuthenticationToken)) {
+            return authentication.getName();
+        }
+        return "";
     }
 
     public String getCurrentUid() {
@@ -41,4 +53,5 @@ public class UserContextService {
     public String toString() {
         return "UserContextServiceImpl [context=" + SecurityContextHolder.getContext() + "]";
     }
+
 }
