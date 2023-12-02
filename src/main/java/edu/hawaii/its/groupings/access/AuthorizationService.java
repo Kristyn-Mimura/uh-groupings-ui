@@ -5,9 +5,12 @@ import org.apache.commons.logging.LogFactory;
 import edu.hawaii.its.api.controller.GroupingsRestController;
 import edu.hawaii.its.groupings.service.UhUuidCheckerService;
 
+import org.jasig.cas.client.authentication.SimplePrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.security.Principal;
 
 @Service
 public class AuthorizationService {
@@ -25,6 +28,7 @@ public class AuthorizationService {
 
     public RoleHolder fetchRoles(String uhUuid, String uid) {
         RoleHolder roleHolder = new RoleHolder();
+        Principal principal = new SimplePrincipal(uhUuid);
         roleHolder.add(Role.ANONYMOUS);
 
         //Determine if uhUuid is valid
@@ -36,12 +40,12 @@ public class AuthorizationService {
             roleHolder.add(Role.DEPARTMENT);
         }
         //Determine if user is an owner.
-        if (checkResult(groupingsRestController.hasOwnerPrivs())) {
+        if (checkResult(groupingsRestController.hasOwnerPrivs(principal))) {
             roleHolder.add(Role.OWNER);
         }
 
         //Determine if a user is an admin.
-        if (checkResult(groupingsRestController.hasAdminPrivs())) {
+        if (checkResult(groupingsRestController.hasAdminPrivs(principal))) {
             roleHolder.add(Role.ADMIN);
         }
 
