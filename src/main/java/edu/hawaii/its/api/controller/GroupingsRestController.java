@@ -157,11 +157,18 @@ public class GroupingsRestController {
     /**
      * Check if principle is an administrator.
      */
+//    @GetMapping(value = "/admins")
+//    public ResponseEntity<String> hasAdminPrivs() {
+//        logger.info("Entered REST hasAdminPrivs...");
+//        String principalName = policy.sanitize(userContextService.getCurrentUserName());
+//        String uri = String.format(API_2_1_BASE + "/admins", principalName);
+//        return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.GET);
+//    }
 
     @GetMapping(value = "/admins")
-    public ResponseEntity<String> hasAdminPrivs(Principal principal) {
+    public ResponseEntity<String> hasAdminPrivs() {
         logger.info("Entered REST hasAdminPrivs...");
-        String principalName = policy.sanitize(principal.getName());
+        String principalName = userContextService.getCurrentUserName();
         String uri = String.format(API_2_1_BASE + "/admins", principalName);
         return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.GET);
     }
@@ -508,9 +515,9 @@ public class GroupingsRestController {
      * Check if principle is an owner, of any grouping.
      */
     @GetMapping(value = "/owners")
-    public ResponseEntity<String> hasOwnerPrivs(Principal principal) {
+    public ResponseEntity<String> hasOwnerPrivs() {
         logger.info("Entered REST hasOwnerPrivs...");
-        String principalName = policy.sanitize(principal.getName());
+        String principalName = policy.sanitize(userContextService.getCurrentUserName());
         String uri = String.format(API_2_1_BASE + "/owners", principalName);
         return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.GET);
     }

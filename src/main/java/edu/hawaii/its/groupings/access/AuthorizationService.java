@@ -40,12 +40,12 @@ public class AuthorizationService {
             roleHolder.add(Role.DEPARTMENT);
         }
         //Determine if user is an owner.
-        if (checkResult(groupingsRestController.hasOwnerPrivs(principal))) {
+        if (checkResult(groupingsRestController.hasOwnerPrivs())) {
             roleHolder.add(Role.OWNER);
         }
 
         //Determine if a user is an admin.
-        if (checkResult(groupingsRestController.hasAdminPrivs(principal))) {
+        if (checkResult(groupingsRestController.hasAdminPrivs())) {
             roleHolder.add(Role.ADMIN);
         }
 
