@@ -34,7 +34,7 @@ public class GroupingsRestControllerForTesting {
     @GetMapping(value = "/exception")
     public ResponseEntity<String> throwException() {
         logger.info("Entered REST throwException...");
-        String principalName = userContextService.getCurrentUserName();
+        String principalName = userContextService.getCurrentUsername();
         String uri = String.format(API_2_1_BASE + "/exception");
         return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.GET);
     }

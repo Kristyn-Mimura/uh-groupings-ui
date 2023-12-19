@@ -24,13 +24,9 @@ public class UserContextService {
         return new AnonymousUser();
     }
 
-    public String getCurrentUserName() {
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        Authentication authentication = securityContext.getAuthentication();
-        if (!(authentication instanceof AnonymousAuthenticationToken)) { // if user is authenticated
-            return authentication.getName();
-        }
-        return "";
+    public String getCurrentUsername() {
+        User user = getCurrentUser();
+        return user != null ? user.getUsername() : "";
     }
 
     public String getCurrentUid() {
