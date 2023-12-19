@@ -519,6 +519,7 @@ public class GroupingsRestController {
         logger.info("Entered REST hasOwnerPrivs...");
         String principalName = policy.sanitize(userContextService.getCurrentUsername());
         String uri = String.format(API_2_1_BASE + "/owners", principalName);
+        System.out.println("owner name: " + principal.getName());
         return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.GET);
     }
 
