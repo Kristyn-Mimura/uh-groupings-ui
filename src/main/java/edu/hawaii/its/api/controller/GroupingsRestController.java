@@ -515,11 +515,10 @@ public class GroupingsRestController {
      * Check if principle is an owner, of any grouping.
      */
     @GetMapping(value = "/owners")
-    public ResponseEntity<String> hasOwnerPrivs() {
+    public ResponseEntity<String> hasOwnerPrivs(Principal principal) {
         logger.info("Entered REST hasOwnerPrivs...");
-        String principalName = policy.sanitize(userContextService.getCurrentUsername());
+        String principalName = policy.sanitize(principal.getName());
         String uri = String.format(API_2_1_BASE + "/owners", principalName);
-        System.out.println("owner name: " + principal.getName());
         return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.GET);
     }
 
