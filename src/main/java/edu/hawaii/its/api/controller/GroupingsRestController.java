@@ -118,10 +118,10 @@ public class GroupingsRestController {
     @PostMapping(value = "/groupings/group")
     @ResponseBody
     public ResponseEntity<String> getGrouping(@RequestBody(required = true) List<String> groupPaths,
-                                             @RequestParam(required = true) Integer page,
-                                             @RequestParam(required = true) Integer size,
-                                             @RequestParam(required = true) String sortString,
-                                             @RequestParam(required = true) Boolean isAscending) {
+                                              @RequestParam(required = true) Integer page,
+                                              @RequestParam(required = true) Integer size,
+                                              @RequestParam(required = true) String sortString,
+                                              @RequestParam(required = true) Boolean isAscending) {
         logger.info("Entered REST getGrouping...");
         Map<String, String> params = mapGroupingParameters(page, size, sortString, isAscending);
         String principalName = policy.sanitize(userContextService.getCurrentUsername());
@@ -131,23 +131,23 @@ public class GroupingsRestController {
     }
 
     @GetMapping(value = "/groupings/{groupPath}/description")
-    public  ResponseEntity<String> getGroupingDescription(@PathVariable String groupPath) {
+    public ResponseEntity<String> getGroupingDescription(@PathVariable String groupPath) {
         logger.info("Entered REST getGroupingDescription...");
         String principalName = policy.sanitize(userContextService.getCurrentUsername());
         String uri = String.format(API_2_1_BASE + "/groupings/%s/description", policy.sanitize(groupPath));
         return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.GET);
     }
 
-    @GetMapping(value = "/groupings/{groupPath}/groupings-sync-dFestinations")
-    public  ResponseEntity<String> getGroupingSyncDest(@PathVariable String groupPath) {
+    @GetMapping(value = "/groupings/{groupPath}/groupings-sync-destinations")
+    public ResponseEntity<String> getGroupingSyncDest(Principal principal, @PathVariable String groupPath) {
         logger.info("Entered REST getGroupingSyncDest...");
-        String principalName = policy.sanitize(userContextService.getCurrentUsername());
+        String principalName = policy.sanitize(principal.getName());
         String uri = String.format(API_2_1_BASE + "/groupings/%s/groupings-sync-destinations", policy.sanitize(groupPath));
         return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.GET);
     }
 
     @GetMapping(value = "/groupings/{groupPath}/opt-attributes")
-    public  ResponseEntity<String> getGroupingOptAttributes(@PathVariable String groupPath) {
+    public ResponseEntity<String> getGroupingOptAttributes(@PathVariable String groupPath) {
         logger.info("Entered REST getGroupingOptAttributes...");
         String principalName = policy.sanitize(userContextService.getCurrentUsername());
         String uri = String.format(API_2_1_BASE + "/groupings/%s/opt-attributes", policy.sanitize(groupPath));
@@ -157,14 +157,6 @@ public class GroupingsRestController {
     /**
      * Check if principle is an administrator.
      */
-//    @GetMapping(value = "/admins")
-//    public ResponseEntity<String> hasAdminPrivs() {
-//        logger.info("Entered REST hasAdminPrivs...");
-//        String principalName = policy.sanitize(userContextService.getCurrentUsername());
-//        String uri = String.format(API_2_1_BASE + "/admins", principalName);
-//        return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.GET);
-//    }
-
     @GetMapping(value = "/admins")
     public ResponseEntity<String> hasAdminPrivs(Principal principal) {
         logger.info("Entered REST hasAdminPrivs...");
@@ -172,6 +164,7 @@ public class GroupingsRestController {
         String uri = String.format(API_2_1_BASE + "/admins", principalName);
         return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.GET);
     }
+
     /**
      * Add a member to the admin group.
      */
@@ -209,6 +202,7 @@ public class GroupingsRestController {
         String uri = String.format(API_2_1_BASE + "/admins/%s/%s", safeGroupings, safeUserToDelete);
         return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.DELETE);
     }
+
 
     /**
      * Wipe the grouping clean of all members and reset the groupings preferences.
@@ -532,6 +526,7 @@ public class GroupingsRestController {
         String uri = String.format(API_2_1_BASE + "/grouping/%s/owners", groupingPath);
         return httpRequestService.makeApiRequest(principalName, uri, HttpMethod.GET);
     }
+
     /**
      * Give ownership of grouping at grouping path to newOwner. A user with owner privileges has
      * read and write privileges
@@ -569,10 +564,10 @@ public class GroupingsRestController {
      */
     @GetMapping(value = "/groupings/{path:.+}")
     public ResponseEntity<String> getGrouping(@PathVariable String path,
-            @RequestParam(required = true) Integer page,
-            @RequestParam(required = true) Integer size,
-            @RequestParam(required = true) String sortString,
-            @RequestParam(required = true) Boolean isAscending) {
+                                              @RequestParam(required = true) Integer page,
+                                              @RequestParam(required = true) Integer size,
+                                              @RequestParam(required = true) String sortString,
+                                              @RequestParam(required = true) Boolean isAscending) {
         logger.info("Entered REST getGrouping...");
         String principalName = policy.sanitize(userContextService.getCurrentUsername());
         Map<String, String> params = mapGroupingParameters(page, size, sortString, isAscending);
@@ -587,7 +582,7 @@ public class GroupingsRestController {
      */
     @PutMapping(value = "/groupings/{path}/description")
     public ResponseEntity<String> updateDescription(@PathVariable String path,
-            @RequestBody(required = false) String description) {
+                                                    @RequestBody(required = false) String description) {
         logger.info("Entered REST updateDescription...");
         String principalName = policy.sanitize(userContextService.getCurrentUsername());
         String safePath = policy.sanitize(path);
@@ -641,9 +636,8 @@ public class GroupingsRestController {
      * Enable or disable a users ability to opt out of grouping at groupingPath.
      */
     @PostMapping(value = "/{grouping}/{optOutOn}/setOptOut")
-    public ResponseEntity<String> setOptOut(
-            @PathVariable String grouping,
-            @PathVariable boolean optOutOn) {
+    public ResponseEntity<String> setOptOut(@PathVariable String grouping,
+                                            @PathVariable boolean optOutOn) {
         logger.info("Entered REST setOptOut...");
         String principalName = policy.sanitize(userContextService.getCurrentUsername());
         String safeGrouping = policy.sanitize(grouping);
@@ -655,7 +649,7 @@ public class GroupingsRestController {
      */
     @GetMapping(value = "/{path:.+}/owners/{uidToCheck}")
     public ResponseEntity<String> isSoleOwner(@PathVariable String path,
-            @PathVariable String uidToCheck) {
+                                              @PathVariable String uidToCheck) {
         logger.info("Entered REST isSoleOwner...");
         String principalName = policy.sanitize(userContextService.getCurrentUsername());
         String baseUri = String.format(API_2_1_BASE + "/groupings/%s/owners/%s", path, uidToCheck);
@@ -707,7 +701,7 @@ public class GroupingsRestController {
     }
 
     public Map<String, String> mapGroupingParameters(Integer page, Integer size, String sortString,
-            Boolean isAscending) {
+                                                     Boolean isAscending) {
         Map<String, String> params = new HashMap<>();
         params.put("page", Integer.toString(page));
         params.put("size", Integer.toString(size));
@@ -725,7 +719,7 @@ public class GroupingsRestController {
     }
 
     private ResponseEntity<String> changePreference(String grouping, String uhIdentifier, String preference,
-            Boolean isOn) {
+                                                    Boolean isOn) {
         String ending = "disable";
         if (isOn) {
             ending = "enable";
