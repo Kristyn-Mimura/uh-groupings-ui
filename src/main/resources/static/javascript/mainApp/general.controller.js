@@ -30,7 +30,7 @@
         angular.extend(this, $controller("TableJsController", { $scope }));
 
         /**
-         * Get the username of the current user
+         * Get the uid of the current user
          */
         groupingsService.getCurrentUser((res) => {
             $scope.currentUser = {

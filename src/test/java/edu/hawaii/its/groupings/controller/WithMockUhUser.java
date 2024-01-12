@@ -16,5 +16,4 @@ public @interface WithMockUhUser {
 
     String name() default "User";
 
-    String uid();
 }
