@@ -34,7 +34,7 @@
          */
         groupingsService.getCurrentUser((res) => {
             $scope.currentUser = {
-                uid: res.data.username,
+                uid: res.data.uid,
                 uhUuid: res.data.uhUuid
             };
             $scope.feedbackEmail = $scope.currentUser.uid + Message.Csv.EMAIL_SUFFIX;
