@@ -1886,6 +1886,12 @@
                 $scope.excludeDisable = true;
             }
         };
+
+        $scope.isNoLongerOwner = () => {
+            if (true) {
+                $scope.displayDynamicModal(Message.Title.INVALID_EMAIL_ERROR, Message.Body.INVALID_EMAIL_ERROR);
+            }
+        };
     }
 
     function SyncDestModalController($scope, $uibModalInstance, isSynced, syncDestDescription, Message) {
@@ -1904,6 +1910,20 @@
          */
         $scope.closeSyncDestModal = () => {
             $uibModalInstance.dismiss();
+        };
+
+        $scope.displayNoOwnerPrivsErrorModal = () => {
+            $scope.noOwnerPrivsErrorModalInstance = $uibModal.open({
+                templateUrl: "modal/noOwnerPrivsModal",
+                scope: $scope,
+                backdrop: "static",
+                keyboard: false,
+                ariaLabelledBy: "no-owner-privs-modal"
+            });
+        };
+
+        $scope.closeNoOwnerPrivsErrorModal = () => {
+            $scope.noOwnerPrivsErrorModalInstance.close();
         };
     }
 

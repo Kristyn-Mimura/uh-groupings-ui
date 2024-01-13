@@ -196,6 +196,13 @@
         };
 
         /**
+         * Redirect the user to the groupings page.
+         */
+        $scope.proceedRedirectGroupings = () => {
+            $window.location.href = `${$scope.getBasePath()}/groupings`;
+        };
+
+        /**
          * Redirect the user to the home page.
          */
         $scope.proceedRedirect = () => {
