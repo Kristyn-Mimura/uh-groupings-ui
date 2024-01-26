@@ -98,6 +98,8 @@
         $scope.includeDisable = false;
         $scope.excludeDisable = false;
 
+        $scope.hasOwnerPriv = false;
+
         // Keeps track of async calls made throughout this js controller
         let asyncThreadCount = 0;
         // Flag used for getGroupingInformation function to end async call
@@ -431,7 +433,7 @@
             $scope.pageSelected = false;
             $scope.waitingForImportResponse = false;
         };
-        
+
         /**
          * Display a modal containing a browse local file system for import button.
          * @param listName - Current list
@@ -1297,7 +1299,7 @@
         $scope.resetGroup = () => {
             let listNames = "";
             let resetAll = [];
-            
+
             if ($scope.includeCheck && $scope.excludeCheck) {
                 listNames = "Exclude and Include lists";
                 resetAll = $scope.groupingInclude.concat($scope.groupingExclude);
@@ -1814,25 +1816,28 @@
          * @param {String} listName - the name of the list
          */
         $scope.exportGroupToCsv = (table, listName) => {
-            let data, filename, link, csv;
+            $scope.hasOwnerPrivs();
+            if ($scope.hasOwnerPriv) {
+                let data, filename, link, csv;
 
-            csv = $scope.convertListToCsv(table);
+                csv = $scope.convertListToCsv(table);
 
-            if (csv == null) {
-                $scope.displayApiErrorModal();
-                return;
+                if (csv == null) {
+                    $scope.displayApiErrorModal();
+                    return;
+                }
+
+                filename = $scope.selectedGrouping.name + ":" + listName + "_list.csv";
+                csv = "data:text/csv;charset=utf-8," + csv;
+                data = encodeURI(csv);
+
+                link = document.createElement("a");
+                link.setAttribute("href", data);
+                link.setAttribute("download", filename);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
             }
-
-            filename = $scope.selectedGrouping.name + ":" + listName + "_list.csv";
-            csv = "data:text/csv;charset=utf-8," + csv;
-            data = encodeURI(csv);
-
-            link = document.createElement("a");
-            link.setAttribute("href", data);
-            link.setAttribute("download", filename);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
         };
 
         /**
@@ -1887,10 +1892,32 @@
             }
         };
 
-        $scope.isNoLongerOwner = () => {
-            if (true) {
-                $scope.displayDynamicModal(Message.Title.INVALID_EMAIL_ERROR, Message.Body.INVALID_EMAIL_ERROR);
-            }
+        $scope.displayNoOwnerPrivsErrorModal = () => {
+            $scope.noOwnerPrivsErrorModalInstance = $uibModal.open({
+                templateUrl: "modal/noOwnerPrivsErrorModal",
+                scope: $scope,
+                backdrop: "static",
+                keyboard: false,
+                ariaLabelledBy: "no-owner-privs-modal"
+            });
+        };
+
+        $scope.setOwnerPrivs = () => {
+            return new Promise((resolve) => groupingsService.getGroupingsOwned((res) => {
+                $scope.hasOwnerPriv = _.some(res, {path: $scope.selectedGrouping.path});
+                if (!$scope.hasOwnerPriv) {
+                    $scope.displayNoOwnerPrivsErrorModal();
+                }
+                resolve();
+            }, () => {
+                $scope.displayApiErrorModal();
+                resolve();
+            }));
+        };
+
+
+        $scope.hasOwnerPrivs = async () => {
+            await $scope.setOwnerPrivs();
         };
     }
 
@@ -1910,20 +1937,6 @@
          */
         $scope.closeSyncDestModal = () => {
             $uibModalInstance.dismiss();
-        };
-
-        $scope.displayNoOwnerPrivsErrorModal = () => {
-            $scope.noOwnerPrivsErrorModalInstance = $uibModal.open({
-                templateUrl: "modal/noOwnerPrivsModal",
-                scope: $scope,
-                backdrop: "static",
-                keyboard: false,
-                ariaLabelledBy: "no-owner-privs-modal"
-            });
-        };
-
-        $scope.closeNoOwnerPrivsErrorModal = () => {
-            $scope.noOwnerPrivsErrorModalInstance.close();
         };
     }
 

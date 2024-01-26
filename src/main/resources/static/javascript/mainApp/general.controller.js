@@ -200,6 +200,7 @@
          */
         $scope.proceedRedirectGroupings = () => {
             $window.location.href = `${$scope.getBasePath()}/groupings`;
+            $scope.noOwnerPrivsErrorModalInstance.close();
         };
 
         /**
