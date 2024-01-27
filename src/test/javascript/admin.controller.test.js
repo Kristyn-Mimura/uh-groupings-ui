@@ -71,14 +71,14 @@ describe("AdminController", function () {
                 "adminGroup": {
                     "members": [
                         {
-                            "username": "username",
+                            "uid": "uid",
                             "uhUuid": "uhUuid",
                             "firstName": "firstName",
                             "lastName": "lastName",
                             "name": "name"
                         },
                         {
-                            "username": "username",
+                            "uid": "uid",
                             "uhUuid": "uhUuid",
                             "firstName": "firstName",
                             "lastName": "lastName",
@@ -247,7 +247,7 @@ describe("AdminController", function () {
     });
 
     describe("checkSoleOwner", () => {
-        let res = {username: "testUsername", name: "testName", uhUuid: "testId"};
+        let res = {uid: "testUid", name: "testName", uhUuid: "testId"};
         it("should empty soleOwnerGroupingNames", () => {
             scope.soleOwnerGroupingNames = ["test1", "test2"];
             scope.selectedOwnedGroupings = ["test"];
@@ -397,7 +397,7 @@ describe("AdminController", function () {
         it("should check that the admin to add is in the admin list", () => {
             scope.containsInput = false;
             scope.adminToAdd = "iamtst01";
-            scope.adminsList = [{username: "iamtst01", uhUuid: "iamtst01"}];
+            scope.adminsList = [{uid: "iamtst01", uhUuid: "iamtst01"}];
             scope.addAdmin();
 
             expect(scope.user).toBe(scope.adminToAdd);
@@ -420,23 +420,23 @@ describe("AdminController", function () {
 
     describe("removeAdmin", () => {
         beforeEach(() => {
-            scope.pagedItemsAdmins[0] = {name: "zzz", username: "zzz", uhUuid: "zzz"};
+            scope.pagedItemsAdmins[0] = {name: "zzz", uid: "zzz", uhUuid: "zzz"};
         });
         it("should call scope.displayRemoveModal", () => {
             scope.adminsList = [
                 {
                     name: "iamtst01",
-                    username: "iamtst01",
+                    uid: "iamtst01",
                     uhUuid: "iamtst01"
                 },
                 {
                     name: "iamtst02",
-                    username: "iamtst02",
+                    uid: "iamtst02",
                     uhUuid: "iamtst02"
                 },
                 {
                     name: "iamtst03",
-                    username: "iamtst03",
+                    uid: "iamtst03",
                     uhUuid: "iamtst03"
                 }
             ];
