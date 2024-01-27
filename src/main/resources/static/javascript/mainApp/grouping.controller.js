@@ -98,6 +98,8 @@
         $scope.includeDisable = false;
         $scope.excludeDisable = false;
 
+        $scope.hasOwnerPriv = false;
+
         // Keeps track of async calls made throughout this js controller
         let asyncThreadCount = 0;
         // Flag used for getGroupingInformation function to end async call
@@ -1834,25 +1836,30 @@
          * @param {String} listName - the name of the list
          */
         $scope.exportGroupToCsv = (table, listName) => {
-            let data, filename, link, csv;
+            //console.log('before '+$scope.hasOwnerPriv);
+            $scope.hasOwnerPrivs();
+            //console.log('after '+$scope.hasOwnerPriv);
+            if ($scope.hasOwnerPriv) {
+                let data, filename, link, csv;
 
-            csv = $scope.convertListToCsv(table);
+                csv = $scope.convertListToCsv(table);
 
-            if (csv == null) {
-                $scope.displayApiErrorModal();
-                return;
+                if (csv == null) {
+                    $scope.displayApiErrorModal();
+                    return;
+                }
+
+                filename = $scope.selectedGrouping.name + ":" + listName + "_list.csv";
+                csv = "data:text/csv;charset=utf-8," + csv;
+                data = encodeURI(csv);
+
+                link = document.createElement("a");
+                link.setAttribute("href", data);
+                link.setAttribute("download", filename);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
             }
-
-            filename = $scope.selectedGrouping.name + ":" + listName + "_list.csv";
-            csv = "data:text/csv;charset=utf-8," + csv;
-            data = encodeURI(csv);
-
-            link = document.createElement("a");
-            link.setAttribute("href", data);
-            link.setAttribute("download", filename);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
         };
 
         /**
@@ -1905,6 +1912,34 @@
                 $scope.excludeCheck = false;
                 $scope.excludeDisable = true;
             }
+        };
+
+
+        $scope.displayNoOwnerPrivsErrorModal = () => {
+            $scope.noOwnerPrivsErrorModalInstance = $uibModal.open({
+                templateUrl: "modal/noOwnerPrivsErrorModal",
+                scope: $scope,
+                backdrop: "static",
+                keyboard: false,
+                ariaLabelledBy: "no-owner-privs-modal"
+            });
+        };
+
+        $scope.setOwnerPrivs = () => {
+            return new Promise((resolve) => groupingsService.getGroupingsOwned((res) => {
+                $scope.hasOwnerPriv = _.some(res.groupingPaths, ['path', $scope.selectedGrouping.path]);
+                if (!$scope.hasOwnerPriv) {
+                    $scope.displayNoOwnerPrivsErrorModal();
+                }
+                resolve();
+            }, () => {
+                $scope.displayApiErrorModal();
+                resolve();
+            }));
+        };
+
+        $scope.hasOwnerPrivs = async () => {
+            await $scope.setOwnerPrivs();
         };
     }
 

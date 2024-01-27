@@ -236,7 +236,7 @@
          * @param {string} user - the user you are checking to see if they are already in the list being added to
          * @returns {boolean} true if the user is already in the list being added to, otherwise returns false
          */
-        const inAdminList = (user) => {
+        $scope.inAdminList = (user) => {
             return _.some($scope.adminsList, { username: user }) ||
                 _.some($scope.adminsList, { uhUuid: user });
         };
@@ -251,7 +251,7 @@
                 $scope.emptyInput = true;
                 return;
             }
-            if (inAdminList(sanitizedAdmin)) {
+            if ($scope.inAdminList(sanitizedAdmin)) {
                 $scope.listName = "admins";
                 $scope.containsInput = true;
                 return;
