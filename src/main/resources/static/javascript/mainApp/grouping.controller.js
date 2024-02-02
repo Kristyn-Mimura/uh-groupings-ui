@@ -738,10 +738,17 @@
                     });
                 }
             }, (res) => {
-                // Display API error modal
-                $scope.waitingForImportResponse = false;
-                $scope.resStatus = res.status;
-                $scope.displayApiErrorModal();
+                console.log(res);
+                if (res.status == 500) {
+                    console.log("in if statement");
+                    $scope.displayOwnerErrorModal();
+                } else {
+                    // Display API error modal
+                    $scope.waitingForImportResponse = false;
+                    $scope.resStatus = res.status;
+                    $scope.displayApiErrorModal();
+                }
+
             });
         };
 
