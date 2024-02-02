@@ -741,7 +741,7 @@
                 console.log(res);
                 if (res.status == 500) {
                     console.log("in if statement");
-                    $scope.displayOwnerErrorModal();
+                    $scope.displayNoPrivsErrorModal();
                 } else {
                     // Display API error modal
                     $scope.waitingForImportResponse = false;
@@ -1912,6 +1912,16 @@
                 $scope.excludeCheck = false;
                 $scope.excludeDisable = true;
             }
+        };
+
+        $scope.displayNoPrivsErrorModal = () => {
+            $scope.noPrivsErrorModalInstance = $uibModal.open({
+                templateUrl: "modal/noPrivsErrorModal",
+                scope: $scope,
+                backdrop: "static",
+                keyboard: false,
+                ariaLabelledBy: "no-privs-modal"
+            });
         };
     }
 

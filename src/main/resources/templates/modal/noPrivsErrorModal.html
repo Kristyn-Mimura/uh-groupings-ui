@@ -1,0 +1,14 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<div class="modal-header">
+    <h5 class="modal-title" id="no-privs-modal">Restricted Action</h5>
+</div>
+<div class="modal-body" id="modal-body">
+    <p th:text="#{screen.message.modal.access.lost.privs}"></p>
+
+    <p th:utext="#{screen.message.modal.remove.redirect.groupings.error}"></p>
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="proceedRedirect()">Ok</button>
+</div>
+</html>
