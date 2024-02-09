@@ -1,5 +1,7 @@
 package edu.hawaii.its.api.type;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 public class GroupingsHTTPException extends RuntimeException {

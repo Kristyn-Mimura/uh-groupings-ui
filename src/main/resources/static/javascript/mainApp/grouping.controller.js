@@ -740,7 +740,6 @@
             }, (res) => {
                 console.log(res);
                 if (res.status == 500) {
-                    console.log("in if statement");
                     $scope.displayNoPrivsErrorModal();
                 } else {
                     // Display API error modal
