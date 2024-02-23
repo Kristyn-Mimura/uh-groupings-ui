@@ -8,15 +8,23 @@
      * @param groupingsService - service for creating requests to the groupings API
      */
     function AnnouncementsJsController($scope, $controller, groupingsService) {
-        angular.extend(this, $controller("GeneralJsController", { $scope }));
+        angular.extend(this, $controller("GeneralJsController", {$scope}));
         /**
          * Load the valid outage messages into outageMessage,
          * otherwise display an API error modal.
          */
+        $scope.dataLoaded = false;
         $scope.init = () => {
             groupingsService.getAnnouncements((res) => {
-                    $scope.activeAnnouncements = $scope.handleActiveAnnouncements(res.announcements);
-                }, () =>{
+                    //$scope.activeAnnouncements = $scope.handleActiveAnnouncements(res.announcements);
+                    $scope.activeAnnouncements = ["hello"];
+                    //console.log($scope.activeAnnouncements);
+                    //if ($scope.activeAnnouncements.length === 0) {
+                        setTimeout(() => {
+                            document.getElementById('announcementsSection').style.display = 'block';
+                        }, 1);
+                    //}
+                }, () => {
                     $scope.displayApiErrorModal();
                 }
             );
