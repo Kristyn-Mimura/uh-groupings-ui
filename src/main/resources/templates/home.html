@@ -13,19 +13,18 @@
 
 <main>
     <div class="col-12 p-1" data-ng-controller="AnnouncementsJsController" ng-init="init()">
-        <div id="announcementsSection" style="display: none">
-            <div ng-if="activeAnnouncements.length">
-                <div class="mt-1" ng-repeat="announcement in activeAnnouncements">
-                    <div class="alert alert-warning container alert-dismissible fade show" role="alert">
-                        {{ announcement }}
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
+<!--        <div id="announcementsSection" style="display: none"  ng-if="activeAnnouncements && activeAnnouncements.length > 0">-->
+        <div ng-if="initDone">
+            <div  class="mt-1" ng-repeat="announcement in activeAnnouncements">
+                <div class="alert alert-warning container alert-dismissible fade show" role="alert">
+<!--                    <span ng-bind="announcement"></span>-->
+                    {{ announcement }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
             </div>
         </div>
-
     </div>
     <div class="container mt-5 mb-5">
         <div class="row">
@@ -75,31 +74,38 @@
                     <div class="col-md-4">
                         <div class="text-center">
                             <img alt="cogs"
-                                 th:srcset="@{images/cogs.png 1x, images/cogs-2x.png 2x, images/cogs.svg}" th:src="@{images/cogs.png}">
+                                 th:srcset="@{images/cogs.png 1x, images/cogs-2x.png 2x, images/cogs.svg}"
+                                 th:src="@{images/cogs.png}">
                         </div>
-                        <p class="text-center explain-paragraph-text" th:utext="#{screen.message.home.page.groupingFeatures}"></p>
+                        <p class="text-center explain-paragraph-text"
+                           th:utext="#{screen.message.home.page.groupingFeatures}"></p>
                     </div>
 
                     <div class="col-md-4">
                         <div class="text-center">
                             <img alt="id-email"
-                                 th:srcset="@{images/id-email.png 1x, images/id-email-2x.png 2x, images/id-email.svg}" th:src="@{images/id-email.png}">
+                                 th:srcset="@{images/id-email.png 1x, images/id-email-2x.png 2x, images/id-email.svg}"
+                                 th:src="@{images/id-email.png}">
                         </div>
-                        <p class="text-center explain-paragraph-text" th:utext="#{screen.message.home.page.listServ}"></p>
+                        <p class="text-center explain-paragraph-text"
+                           th:utext="#{screen.message.home.page.listServ}"></p>
                     </div>
 
                     <div class="col-md-4">
                         <div class="text-center">
                             <img alt="watch"
-                                 th:srcset="@{images/watch.png 1x, images/watch-2x.png 2x, images/watch.svg}" th:src="@{images/watch.png}">
+                                 th:srcset="@{images/watch.png 1x, images/watch-2x.png 2x, images/watch.svg}"
+                                 th:src="@{images/watch.png}">
                         </div>
-                        <p class="text-center explain-paragraph-text" th:utext="#{screen.message.home.page.groupingData}"></p>
+                        <p class="text-center explain-paragraph-text"
+                           th:utext="#{screen.message.home.page.groupingData}"></p>
                     </div>
                 </div>
                 <div class="row">
                     <a class="btn btn-lg mx-auto mt-4" role="button"
-                       href="https://uhawaii.atlassian.net/wiki/spaces/UHIAM/pages/13403213/UH+Groupings">Learn More &nbsp;<i
-                            class="fa fa-arrow-right" aria-hidden="true"></i></a>
+                       href="https://uhawaii.atlassian.net/wiki/spaces/UHIAM/pages/13403213/UH+Groupings">Learn More
+                        &nbsp;<i
+                                class="fa fa-arrow-right" aria-hidden="true"></i></a>
                 </div>
             </div>
         </div>
@@ -118,7 +124,8 @@
                         </div>
                     </div>
                     <div class="col-sm-9 col-md-10">
-                        <h1 class="h3 text-center text-md-left">Welcome, <span sec:authentication="principal.givenName"></span>!</h1>
+                        <h1 class="h3 text-center text-md-left">Welcome, <span
+                                sec:authentication="principal.givenName"></span>!</h1>
                         <div>
                             <h1 class="h3 text-center text-md-left">Role:
                                 <span th:switch="true">
@@ -133,43 +140,44 @@
             </div>
         </div>
         <div ng-controller="HomeJsController" data-ng-init="init()">
-        <div class="container mt-5 mb-5">
-            <div class="row">
-                <div class="col-md-4 mb-5" sec:authorize="hasRole('ROLE_ADMIN')">
-                    <div class="dashboard-item-icon text-primary mb-3">
-                        <i class="fa fa-key fa-3x mr-4" aria-hidden="true"></i>
+            <div class="container mt-5 mb-5">
+                <div class="row">
+                    <div class="col-md-4 mb-5" sec:authorize="hasRole('ROLE_ADMIN')">
+                        <div class="dashboard-item-icon text-primary mb-3">
+                            <i class="fa fa-key fa-3x mr-4" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <h2 class="h4">Administration</h2>
+                            <p>Manage the list of Administrators for this service. Search for and manage any grouping on
+                                behalf of the owner.</p>
+                            <a class="btn dark-teal-bg btn-bottom" th:href="@{/admin}">Admin</a>
+                        </div>
                     </div>
-                    <div>
-                        <h2 class="h4">Administration</h2>
-                        <p>Manage the list of Administrators for this service. Search for and manage any grouping on
-                            behalf of the owner.</p>
-                        <a class="btn dark-teal-bg btn-bottom" th:href="@{/admin}">Admin</a>
+                    <div class="col-md-4 mb-5" sec:authorize="hasRole('ROLE_UH')">
+                        <div class="text-primary mb-3">
+                            <i class="fa fa-id-card fa-3x mr-4" aria-hidden="true"></i>
+                            <span ng-bind="numberOfMemberships" id="memberCount" class="h1"></span>
+                        </div>
+                        <div>
+                            <h2 class="h4">Memberships</h2>
+                            <p>View and manage my memberships. Search for new groupings to join as a member.</p>
+                            <a class="btn dark-teal-bg btn-bottom" th:href="@{/memberships}">Memberships</a>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-4 mb-5" sec:authorize="hasRole('ROLE_UH')">
-                    <div class="text-primary mb-3">
-                        <i class="fa fa-id-card fa-3x mr-4" aria-hidden="true"></i>
-                        <span ng-bind="numberOfMemberships" id="memberCount" class="h1"></span>
-                    </div>
-                    <div>
-                        <h2 class="h4">Memberships</h2>
-                        <p>View and manage my memberships. Search for new groupings to join as a member.</p>
-                        <a class="btn dark-teal-bg btn-bottom" th:href="@{/memberships}">Memberships</a>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-5" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_OWNER')">
-                    <div class="text-primary mb-3">
-                        <i class="fa fa-wrench fa-3x mr-3" aria-hidden="true"></i>
-                        <span ng-bind="numberOfGroupings" id="groupCount" class="h1"></span>
-                    </div>
-                    <div>
-                        <h2 class="h4">Groupings</h2>
-                        <p>Review members, manage Include and Exclude lists, configure preferences, and export members.</p>
-                        <a class="btn dark-teal-bg btn-bottom" th:href="@{/groupings}">Groupings</a>
+                    <div class="col-md-4 mb-5" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_OWNER')">
+                        <div class="text-primary mb-3">
+                            <i class="fa fa-wrench fa-3x mr-3" aria-hidden="true"></i>
+                            <span ng-bind="numberOfGroupings" id="groupCount" class="h1"></span>
+                        </div>
+                        <div>
+                            <h2 class="h4">Groupings</h2>
+                            <p>Review members, manage Include and Exclude lists, configure preferences, and export
+                                members.</p>
+                            <a class="btn dark-teal-bg btn-bottom" th:href="@{/groupings}">Groupings</a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
         </div>
     </div>
 </main>

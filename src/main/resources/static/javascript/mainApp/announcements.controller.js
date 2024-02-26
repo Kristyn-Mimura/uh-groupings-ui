@@ -13,17 +13,16 @@
          * Load the valid outage messages into outageMessage,
          * otherwise display an API error modal.
          */
-        $scope.dataLoaded = false;
         $scope.init = () => {
+            $scope.initDone = false;
             groupingsService.getAnnouncements((res) => {
-                    //$scope.activeAnnouncements = $scope.handleActiveAnnouncements(res.announcements);
-                    $scope.activeAnnouncements = ["hello"];
-                    //console.log($scope.activeAnnouncements);
-                    //if ($scope.activeAnnouncements.length === 0) {
-                        setTimeout(() => {
-                            document.getElementById('announcementsSection').style.display = 'block';
-                        }, 1);
-                    //}
+                $scope.activeAnnouncements = $scope.handleActiveAnnouncements(res.announcements);
+                setTimeout(() => {
+                    $scope.initDone = true;
+                }, 1000);
+
+                    //$scope.activeAnnouncements = ['hello','goodbye'];
+                    //$scope.activeAnnouncementsLength = $scope.activeAnnouncements.length;
                 }, () => {
                     $scope.displayApiErrorModal();
                 }

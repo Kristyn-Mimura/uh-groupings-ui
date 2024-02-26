@@ -2691,6 +2691,9 @@ describe("GroupingController", () => {
             }
             // Trigger the event listeners.
             checkbox.click();
+            for (let item of scope.testGroupingMembers.membersOnPage[0]) {
+                console.log(scope.membersInCheckboxList[item.uhUuid]);
+            }
             expect(scope.pageSelected).toBeFalse();
         });
 
