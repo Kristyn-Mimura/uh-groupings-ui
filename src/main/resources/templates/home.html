@@ -13,12 +13,10 @@
 
 <main>
     <div class="col-12 p-1" data-ng-controller="AnnouncementsJsController" ng-init="init()">
-<!--        <div id="announcementsSection" style="display: none"  ng-if="activeAnnouncements && activeAnnouncements.length > 0">-->
-        <div ng-if="initDone">
-            <div  class="mt-1" ng-repeat="announcement in activeAnnouncements">
+        <div ng-if="activeAnnouncements.length">
+            <div class="mt-1" ng-repeat="announcement in activeAnnouncements">
                 <div class="alert alert-warning container alert-dismissible fade show" role="alert">
-<!--                    <span ng-bind="announcement"></span>-->
-                    {{ announcement }}
+                    <div ng-bind="announcement"></div>
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>

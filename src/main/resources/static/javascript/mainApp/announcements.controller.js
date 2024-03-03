@@ -14,14 +14,9 @@
          * otherwise display an API error modal.
          */
         $scope.init = () => {
-            $scope.initDone = false;
             groupingsService.getAnnouncements((res) => {
-                $scope.activeAnnouncements = $scope.handleActiveAnnouncements(res.announcements);
-                setTimeout(() => {
-                    $scope.initDone = true;
-                }, 1000);
-
-                    //$scope.activeAnnouncements = ['hello','goodbye'];
+                    //$scope.activeAnnouncements = $scope.handleActiveAnnouncements(res.announcements);
+                    $scope.activeAnnouncements = ['hello'];
                     //$scope.activeAnnouncementsLength = $scope.activeAnnouncements.length;
                 }, () => {
                     $scope.displayApiErrorModal();
