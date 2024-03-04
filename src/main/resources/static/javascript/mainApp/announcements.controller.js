@@ -15,9 +15,7 @@
          */
         $scope.init = () => {
             groupingsService.getAnnouncements((res) => {
-                    //$scope.activeAnnouncements = $scope.handleActiveAnnouncements(res.announcements);
-                    $scope.activeAnnouncements = ['hello'];
-                    //$scope.activeAnnouncementsLength = $scope.activeAnnouncements.length;
+                    $scope.activeAnnouncements = $scope.handleActiveAnnouncements(res.announcements);
                 }, () => {
                     $scope.displayApiErrorModal();
                 }
